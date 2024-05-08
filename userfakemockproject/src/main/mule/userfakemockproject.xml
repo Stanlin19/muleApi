@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="84a3545b-f795-4126-aeca-2f3e74db4faa" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b41d2d8e-1a60-4121-a840-6616625f49bb">
+		<http:request-connection host="jsonplaceholder.typicode.com"/>
+	</http:request-config>
+	<flow name="getUsersMock" doc:id="7224a981-ea74-4d87-8c51-534755655d76" >
+		<http:listener doc:name="Listener" doc:id="afaad725-725d-4b56-b470-d00b8a71142c" config-ref="HTTP_Listener_config" path="/users"/>
+		<logger level="INFO" doc:name="Logger" doc:id="63b0b80c-9cf4-4e44-972f-8ef2a01ae07b" message="Ingresa al proyecto"/>
+		<http:request method="GET" doc:name="Request" doc:id="c71fe4dd-55ad-41bf-9f32-c040a18cf26f" config-ref="HTTP_Request_configuration" url="http://jsonplaceholder.typicode.com/users"/>
+	</flow>
+	<flow name="getUsersByIdMock" doc:id="01b1ae0b-99a4-42d7-899a-e7a64143905a" >
+		<http:listener doc:name="Listener" doc:id="1d6d8121-1b9c-4f58-b8b3-0de92946f044" config-ref="HTTP_Listener_config" path="/users/{id}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="edfd50cb-b9ad-4c04-945c-fa500a24649e" message="Ingresa al proyecto" />
+		<http:request method="GET" doc:name="Request" doc:id="4835ee3e-ef08-4938-b897-a942ba72ceb5" config-ref="HTTP_Request_configuration" url="http://jsonplaceholder.typicode.com/users/{id}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.uriParams.'id'
+}]]]></http:uri-params>
+		</http:request>
+	</flow>
+</mule>
