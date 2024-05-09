@@ -16,7 +16,19 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:listener doc:name="Listener" doc:id="afaad725-725d-4b56-b470-d00b8a71142c" config-ref="HTTP_Listener_config" path="/users" outputMimeType="application/json"/>
 		<logger level="INFO" doc:name="Logger" doc:id="63b0b80c-9cf4-4e44-972f-8ef2a01ae07b" message="Ingresa al proyecto"/>
 		<http:request method="GET" doc:name="Request" doc:id="c71fe4dd-55ad-41bf-9f32-c040a18cf26f" config-ref="HTTP_Request_configuration" url="http://jsonplaceholder.typicode.com/users" outputMimeType="application/json"/>
-		<set-payload value='#[output application/json&#10;import * from dw::util::Coercions&#10;---&#10;{&#10;	"code": toString(attributes.statusCode),&#10;	"message": "Datos traidos con exito",&#10;	"data": payload&#10;}]' doc:name="Set Payload" doc:id="387b0529-4385-4c54-9de8-f43118175786" mimeType="application/json" encoding="UTF-8"/>
+		<ee:transform doc:name="Transform Message" doc:id="a446f9fb-07e7-41c7-ac7a-456a1476cd4d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code": attributes.statusCode,
+	"message": "Ok",
+	"data": payload
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
 	</flow>
 	<flow name="getUsersByIdMock" doc:id="01b1ae0b-99a4-42d7-899a-e7a64143905a" >
 		<http:listener doc:name="Listener" doc:id="1d6d8121-1b9c-4f58-b8b3-0de92946f044" config-ref="HTTP_Listener_config" path="/users/{id}" allowedMethods="GET" outputMimeType="application/json"/>
@@ -29,9 +41,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"id" : attributes.uriParams.'id'
 }]]]></http:uri-params>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="50b0496b-6139-45de-ab85-c195ba8e90e9" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<ee:transform doc:name="Transform Message" doc:id="50b0496b-6139-45de-ab85-c195ba8e90e9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
